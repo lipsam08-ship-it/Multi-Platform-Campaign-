@@ -45,26 +45,33 @@ class CampaignBuilder:
         """Generate sequential prompts based on campaign parameters"""
         prompts = []
         
+        # Safely get values with defaults to prevent KeyError
+        product_name = campaign_data.get('product_name', 'Your Product')
+        target_audience = campaign_data.get('target_audience', 'your target audience')
+        key_message = campaign_data.get('key_message', 'your key message')
+        selected_platforms = campaign_data.get('selected_platforms', ['Instagram', 'TikTok'])
+        campaign_phases = campaign_data.get('campaign_phases', ['Awareness'])
+
         # Phase 1: Foundation
         prompts.append({
             "phase": "Foundation",
             "platform": "All",
-            "prompt": f"""Act as a senior marketing strategist. Create a 4-week multi-platform campaign for:
+            "prompt": f"""Act as a senior marketing strategist. Create a multi-platform campaign for:
             
-Product: {campaign_data['product_name']}
-Target Audience: {campaign_data['target_audience']}
-Key Message: {campaign_data['key_message']}
-Platforms: {', '.join(campaign_data['selected_platforms'])}
-            
+Product: {product_name}
+Target Audience: {target_audience}
+Key Message: {key_message}
+Platforms: {', '.join(selected_platforms)}
+
 Propose a weekly strategy with specific goals for each platform."""
         })
         
         # Phase 2: Platform-specific content
-        for platform in campaign_data['selected_platforms']:
+        for platform in selected_platforms:
             prompts.append({
                 "phase": "Content Creation",
                 "platform": platform,
-                "prompt": f"""For {platform}, generate 3-5 content ideas for the {campaign_data['campaign_phases'][0]} phase targeting {campaign_data['target_audience']}. Focus on:
+                "prompt": f"""For {platform}, generate 3-5 content ideas for the {campaign_phases[0] if campaign_phases else 'Awareness'} phase targeting {target_audience}. Focus on:
 - Platform-best practices for {platform}
 - Content format recommendations
 - Hashtag strategy
@@ -76,8 +83,8 @@ Propose a weekly strategy with specific goals for each platform."""
             "phase": "Asset Development",
             "platform": "All",
             "prompt": f"""Create specific copy and content guidelines for:
-Product: {campaign_data['product_name']}
-            
+Product: {product_name}
+
 Include:
 - 5 email subject lines
 - 3 Instagram carousel concepts
